@@ -1,4 +1,5 @@
 using Goldmetal.UndeadSurvivor;
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -30,6 +31,7 @@ public class UIManager : MonoBehaviour
         OnGameReset += ItemReset;
         OnGameReset += UIReset;
         OnGameReset += TimeReset;
+        _Player = FindObjectOfType<Player>();
     }
 
     private void Update()
@@ -40,7 +42,7 @@ public class UIManager : MonoBehaviour
 
     public void ChooseReward(int item)
     {
-        Instantiate(_ItemList[item], _PlayerLocation.position, _PlayerLocation.rotation);
+        PhotonNetwork.Instantiate(_ItemList[item].name, _PlayerLocation.position, _PlayerLocation.rotation);
         ChoiceMade();
     }
 

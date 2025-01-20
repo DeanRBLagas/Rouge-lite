@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -52,11 +53,11 @@ public class WaveManager : MonoBehaviour
                 _isSlow = Random.value < 0.75f;
                 if (_isSlow )
                 {
-                    _newZombie = Instantiate(_SlowZombiePrefab, _ZombieSpawns[randomSpawn].position, _ZombieSpawns[randomSpawn].rotation);
+                    _newZombie = PhotonNetwork.Instantiate(_SlowZombiePrefab.name, _ZombieSpawns[randomSpawn].position, _ZombieSpawns[randomSpawn].rotation);
                 }
                 else
                 {
-                    _newZombie = Instantiate(_ZombiePrefab, _ZombieSpawns[randomSpawn].position, _ZombieSpawns[randomSpawn].rotation);
+                    _newZombie = PhotonNetwork.Instantiate(_ZombiePrefab.name, _ZombieSpawns[randomSpawn].position, _ZombieSpawns[randomSpawn].rotation);
                 }
                 BaseEnemy zombieScript = _newZombie.GetComponent<BaseEnemy>();
                 if (zombieScript != null)

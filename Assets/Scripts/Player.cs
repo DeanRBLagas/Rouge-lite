@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Photon.Pun;
 
 public class Player : MonoBehaviour, IDamageable
 {
@@ -23,11 +24,13 @@ public class Player : MonoBehaviour, IDamageable
 
     private Vector2 _moveInput;
     private Rougelite _inputActions;
+    private PhotonView _view;
 
     private void Awake()
     {
         _inputActions = new Rougelite();
         _inputActions.Player.Enable();
+        _view = GetComponent<PhotonView>();
     }
 
     private void OnEnable()
@@ -44,7 +47,7 @@ public class Player : MonoBehaviour, IDamageable
 
     private void Update()
     {
-        if (!IsDead)
+        if (!IsDead && _view.IsMine)
         {
             _moveInput = _inputActions.Player.Movement.ReadValue<Vector2>();
         }
@@ -65,7 +68,7 @@ public class Player : MonoBehaviour, IDamageable
 
     public void OnTriggerStay2D(Collider2D collision)
     {
-        if (!IsDead)
+        if (!IsDead && _view.IsMine)
         {
             IItem item = collision.GetComponent<IItem>();
             GameObject itemCheck = collision.gameObject;
@@ -78,7 +81,7 @@ public class Player : MonoBehaviour, IDamageable
 
     public void OnUse(InputAction.CallbackContext context)
     {
-        if (Inventory.Count > 0 && !IsDead)
+        if (Inventory.Count > 0 && !IsDead && _view.IsMine)
         {
             GameObject itemBeingUsed = Inventory[0];
             IItem item = itemBeingUsed.GetComponent<IItem>();
@@ -91,13 +94,13 @@ public class Player : MonoBehaviour, IDamageable
 
     public void OnFire(InputAction.CallbackContext context)
     {
-        if (Time.timeScale > 0 && !IsDead)
+        if (Time.timeScale > 0 && !IsDead && _view.IsMine)
         {
             for (int i = 0; i < AmountOfBullets; i++)
             {
                 float offset = (i - (AmountOfBullets - 1) / 2f) * _AngleStep - 90;
                 Quaternion newRotation = Gun.transform.rotation * Quaternion.Euler(0, 0, offset);
-                GameObject bullet = Instantiate(_BulletPrefab, _BarrelExit.position, newRotation);
+                GameObject bullet = PhotonNetwork.Instantiate(_BulletPrefab.name, _BarrelExit.position, newRotation);
                 Bullet bulletScript = bullet.GetComponent<Bullet>();
                 bulletScript.Damage = Damage;
             }
