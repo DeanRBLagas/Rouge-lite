@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Player _Player;
     [SerializeField] private TextMeshProUGUI _PlayerHealth;
     [SerializeField] private TextMeshProUGUI _CurrentWave;
+    [SerializeField] private TextMeshProUGUI _ZombiesLeft;
     [SerializeField] private List<Transform> InventorySlots = new List<Transform>();
     [SerializeField] private List<GameObject> _ItemImages = new List<GameObject>();
     [SerializeField] private List<GameObject> _CurrentItemsInInventory = new List<GameObject>();
@@ -32,6 +33,7 @@ public class UIManager : MonoBehaviour
         OnGameReset += UIReset;
         OnGameReset += TimeReset;
         _Player = FindObjectOfType<Player>();
+        _PlayerLocation = FindObjectOfType<Player>().transform;
     }
 
     private void Update()
@@ -50,7 +52,6 @@ public class UIManager : MonoBehaviour
     {
         _WaveClearUI.SetActive(false);
         _WaveManager.StartWave();
-        Time.timeScale = 1;
     }
 
     public void PlayerHealth()
@@ -66,6 +67,7 @@ public class UIManager : MonoBehaviour
     {
         int actualWave = _WaveManager.CurrentWave - 1;
         _CurrentWave.text = "Wave: " + actualWave.ToString();
+        _ZombiesLeft.text = "Zombies left: " + _WaveManager.ZombieList.Count;
     }
 
     public void AddToInventory(int number)

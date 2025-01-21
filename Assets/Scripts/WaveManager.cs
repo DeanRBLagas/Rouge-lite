@@ -90,7 +90,6 @@ public class WaveManager : MonoBehaviour
 
     public void WaveCleared()
     {
-        Time.timeScale = 0;
         _WaveClearUI.SetActive(true);
     }
 }

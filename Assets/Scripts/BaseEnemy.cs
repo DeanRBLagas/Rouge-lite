@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 [RequireComponent(typeof(Animator))]
 public class BaseEnemy : MonoBehaviour, IDamageable
@@ -26,6 +27,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     {
         _player = FindObjectOfType<Player>().transform;
         _animator = GetComponent<Animator>();
+        WaveManager = FindObjectOfType<WaveManager>();
     }
 
     void Update()
@@ -90,7 +92,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
         {
             int randomIndex = Random.Range(0, _ItemDrops.Count);
             GameObject randomItem = _ItemDrops[randomIndex];
-            Instantiate(randomItem, transform.position, transform.rotation);
+            PhotonNetwork.Instantiate(randomItem.name, transform.position, transform.rotation);
         }
     }
 }

@@ -20,7 +20,7 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] private GameObject _BulletPrefab;
     [SerializeField] private float _AngleStep = 5f;
     [SerializeField] private float _MoveSpeed = 5f;
-    [SerializeField] UIManager uiManager;
+    [SerializeField] private UIManager _UiManager;
 
     private Vector2 _moveInput;
     private Rougelite _inputActions;
@@ -31,6 +31,7 @@ public class Player : MonoBehaviour, IDamageable
         _inputActions = new Rougelite();
         _inputActions.Player.Enable();
         _view = GetComponent<PhotonView>();
+        _UiManager = FindObjectOfType<UIManager>();
     }
 
     private void OnEnable()
@@ -88,7 +89,7 @@ public class Player : MonoBehaviour, IDamageable
             item.OnUse();
             Inventory.RemoveAt(0);
             Destroy(itemBeingUsed);
-            uiManager.RemoveFromInventory();
+            _UiManager.RemoveFromInventory();
         }
     }
 
@@ -121,7 +122,7 @@ public class Player : MonoBehaviour, IDamageable
         IsDead = true;
         Animator.SetBool("Dead", true);
         Gun.SetActive(false);
-        uiManager.GameOver.SetActive(true);
+        _UiManager.GameOver.SetActive(true);
         Time.timeScale = 0;
     }
 }

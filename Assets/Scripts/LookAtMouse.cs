@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class LookAtMouse : MonoBehaviour
@@ -5,9 +6,17 @@ public class LookAtMouse : MonoBehaviour
     [SerializeField] private SpriteRenderer _PlayerSprite;
     [SerializeField] private GameObject _Player;
     [SerializeField] private SpriteRenderer _GunSprite;
+
+    private PhotonView _view;
+
+    private void Start()
+    {
+        _view = GetComponent<PhotonView>();
+    }
+
     private void Update()
     {
-        if (Time.timeScale != 0)
+        if (Time.timeScale != 0 && _view.IsMine)
         {
             Vector3 direction = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
             var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
