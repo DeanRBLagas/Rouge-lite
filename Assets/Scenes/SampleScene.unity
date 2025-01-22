@@ -16153,6 +16153,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1909206090}
   - component: {fileID: 1909206091}
+  - component: {fileID: 1909206092}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -16208,6 +16209,28 @@ MonoBehaviour:
   - {fileID: 8397578461136063503, guid: 09ecbb9ef005b7b4e9d25df19245b068, type: 3}
   - {fileID: 5540043590625353482, guid: aa8e839495784ef4b836204b82d32efc, type: 3}
   _CurrentItemsInInventory: []
+--- !u!114 &1909206092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1909206089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 2
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1937202542
 GameObject:
   m_ObjectHideFlags: 0

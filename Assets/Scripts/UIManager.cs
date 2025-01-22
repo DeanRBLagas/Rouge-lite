@@ -1,12 +1,9 @@
-using Goldmetal.UndeadSurvivor;
 using Photon.Pun;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class UIManager : MonoBehaviourPunCallbacks
 {
     public GameObject GameOver;
 
@@ -24,6 +21,7 @@ public class UIManager : MonoBehaviour
 
     private delegate void GameReset();
     private event GameReset OnGameReset;
+    private int playersReady = 0;
 
     private void Start()
     {
@@ -45,7 +43,8 @@ public class UIManager : MonoBehaviour
     public void ChooseReward(int item)
     {
         PhotonNetwork.Instantiate(_ItemList[item].name, _PlayerLocation.position, _PlayerLocation.rotation);
-        ChoiceMade();
+        photonView.RPC("PlayerMadeChoice", RpcTarget.MasterClient);
+        //ChoiceMade();
     }
 
     public void ChoiceMade()
@@ -143,5 +142,24 @@ public class UIManager : MonoBehaviour
     public void Reset()
     {
         OnGameReset?.Invoke();
+    }
+
+    [PunRPC]
+    public void PlayerMadeChoice()
+    {
+        _WaveClearUI.SetActive(false);
+        playersReady++;
+        if (playersReady == PhotonNetwork.CurrentRoom.PlayerCount)
+        {
+            photonView.RPC("StartNextWave", RpcTarget.All);
+        }
+    }
+
+    [PunRPC]
+    public void StartNextWave()
+    {
+        _WaveClearUI.SetActive(false);
+        _WaveManager.StartWave();
+        playersReady = 0;
     }
 }

@@ -1,8 +1,9 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WaveManager : MonoBehaviour
+public class WaveManager : MonoBehaviourPunCallbacks
 {
     public List<GameObject> ZombieList = new List<GameObject>();
     public int CurrentWave = 1;
@@ -19,17 +20,18 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private int _AmountOfWavesForSpeedIncrease;
 
     private bool _isSlow;
-    private GameObject _newZombie;
 
     private void Start()
     {
-        CurrentWave = 1;
-        StartWave();
+        if (PhotonNetwork.IsMasterClient)
+        {
+            StartWave();
+        }
     }
 
     private void Update()
     {
-        if (ZombieList.Count == 0 && CurrentWave > 1)
+        if (PhotonNetwork.IsMasterClient && ZombieList.Count == 0 && CurrentWave > 1)
         {
             WaveCleared();
         }
@@ -38,10 +40,11 @@ public class WaveManager : MonoBehaviour
     public void StartWave()
     {
         float amountOfZombies = Mathf.Pow(CurrentWave, 2) + 3;
-        if(amountOfZombies > 400)
+        if (amountOfZombies > 400)
         {
             amountOfZombies = 403;
         }
+
         HealthIncrease();
         SpeedIncrease();
 
@@ -51,24 +54,34 @@ public class WaveManager : MonoBehaviour
             {
                 int randomSpawn = Random.Range(0, _ZombieSpawns.Count);
                 _isSlow = Random.value < 0.75f;
-                if (_isSlow )
+
+                GameObject newZombie;
+                if (_isSlow)
                 {
-                    _newZombie = PhotonNetwork.Instantiate(_SlowZombiePrefab.name, _ZombieSpawns[randomSpawn].position, _ZombieSpawns[randomSpawn].rotation);
+                    newZombie = PhotonNetwork.InstantiateRoomObject(
+                        _SlowZombiePrefab.name,
+                        _ZombieSpawns[randomSpawn].position,
+                        _ZombieSpawns[randomSpawn].rotation);
                 }
                 else
                 {
-                    _newZombie = PhotonNetwork.Instantiate(_ZombiePrefab.name, _ZombieSpawns[randomSpawn].position, _ZombieSpawns[randomSpawn].rotation);
+                    newZombie = PhotonNetwork.InstantiateRoomObject(
+                        _ZombiePrefab.name,
+                        _ZombieSpawns[randomSpawn].position,
+                        _ZombieSpawns[randomSpawn].rotation);
                 }
-                BaseEnemy zombieScript = _newZombie.GetComponent<BaseEnemy>();
+
+                BaseEnemy zombieScript = newZombie.GetComponent<BaseEnemy>();
                 if (zombieScript != null)
                 {
                     zombieScript.WaveManager = this;
                     zombieScript.CurrentHealth += ZombieHealthIncrease;
                     zombieScript.Speed += ZombieSpeedIncrease;
                 }
-                ZombieList.Add(_newZombie);
+                ZombieList.Add(newZombie);
             }
         }
+
         CurrentWave++;
     }
 
@@ -89,6 +102,13 @@ public class WaveManager : MonoBehaviour
     }
 
     public void WaveCleared()
+    {
+        _WaveClearUI.SetActive(true);
+        photonView.RPC("NotifyWaveCleared", RpcTarget.All);
+    }
+
+    [PunRPC]
+    public void NotifyWaveCleared()
     {
         _WaveClearUI.SetActive(true);
     }
