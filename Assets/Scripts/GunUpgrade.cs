@@ -20,8 +20,6 @@ public class GunUpgrade : MonoBehaviour, IItem
 
     public void OnUse()
     {
-        _player.CurrentHealth = _player.MaxHealth;
-        _player.MaxHealth += 10;
         _player.GunUpgrade = Random.value < 0.5f;
         if (_player.GunUpgrade && _player.AmountOfBullets < 5)
         {
